@@ -1,0 +1,48 @@
+{
+    "name": "Vibe AI Agent",
+    "short_name": "VibeAI",
+    "description": "Ultimate Free AI Platform - Code, Generate, Create",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#0f0f1a",
+    "theme_color": "#667eea",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["productivity", "developer", "utilities"],
+    "shortcuts": [
+        {
+            "name": "New Chat",
+            "short_name": "Chat",
+            "description": "Start a new AI conversation",
+            "url": "/index.html?tab=chat",
+            "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Generate Image",
+            "short_name": "Image",
+            "description": "Create AI-generated images",
+            "url": "/index.html?tab=image",
+            "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Code Editor",
+            "short_name": "Code",
+            "description": "Write and run code",
+            "url": "/index.html?tab=editor",
+            "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+        }
+    ]
+}

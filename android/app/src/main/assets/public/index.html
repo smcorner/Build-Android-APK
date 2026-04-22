@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vibe AI Agent - Ultimate Free AI Platform</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <script src="https://js.puter.com/v2/"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Splash Screen -->
+        <div id="splash" class="splash">
+            <div class="splash-content">
+                <div class="logo-animation">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h1>Vibe AI Agent</h1>
+                <p>Your Ultimate Free AI Platform</p>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App -->
+        <div id="main-app" class="hidden">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-btn" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1><i class="fas fa-robot"></i> Vibe AI</h1>
+                </div>
+                <div class="header-right">
+                    <div class="api-status" id="apiStatus">
+                        <span class="status-dot active"></span>
+                        <span id="currentProvider">Puter.js</span>
+                    </div>
+                    <button class="settings-btn" onclick="openSettings()">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <nav class="nav-menu">
+                    <div class="nav-section">
+                        <h3>AI Features</h3>
+                        <button class="nav-item active" data-tab="chat" onclick="switchTab('chat')">
+                            <i class="fas fa-comments"></i> Chat & Code
+                        </button>
+                        <button class="nav-item" data-tab="image" onclick="switchTab('image')">
+                            <i class="fas fa-image"></i> Image Gen
+                        </button>
+                        <button class="nav-item" data-tab="ocr" onclick="switchTab('ocr')">
+                            <i class="fas fa-file-alt"></i> OCR
+                        </button>
+                        <button class="nav-item" data-tab="regex" onclick="switchTab('regex')">
+                            <i class="fas fa-code"></i> Regex
+                        </button>
+                    </div>
+                    <div class="nav-section">
+                        <h3>Development</h3>
+                        <button class="nav-item" data-tab="editor" onclick="switchTab('editor')">
+                            <i class="fas fa-edit"></i> Code Editor
+                        </button>
+                        <button class="nav-item" data-tab="preview" onclick="switchTab('preview')">
+                            <i class="fas fa-play"></i> Preview
+                        </button>
+                        <button class="nav-item" data-tab="files" onclick="switchTab('files')">
+                            <i class="fas fa-folder"></i> Files
+                        </button>
+                    </div>
+                    <div class="nav-section">
+                        <h3>Tools</h3>
+                        <button class="nav-item" data-tab="debug" onclick="switchTab('debug')">
+                            <i class="fas fa-bug"></i> Debug
+                        </button>
+                        <button class="nav-item" data-tab="history" onclick="switchTab('history')">
+                            <i class="fas fa-history"></i> History
+                        </button>
+                    </div>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="api-info">
+                        <small>API Calls: <span id="apiCallCount">0</span></small>
+                        <small>Cache Hits: <span id="cacheHits">0</span></small>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Chat Tab -->
+                <div class="tab-content active" id="tab-chat">
+                    <div class="chat-container">
+                        <div class="model-selector">
+                            <select id="chatModel" onchange="saveSettings()">
+                                <optgroup label="Free via Puter.js">
+                                    <option value="openrouter:google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (Free)</option>
+                                    <option value="openrouter:meta-llama/llama-3.3-70b-instruct:free">Llama 3.3 70B (Free)</option>
+                                    <option value="openrouter:mistralai/mistral-small-3.1-24b-instruct:free">Mistral Small 3.1 (Free)</option>
+                                    <option value="openrouter:qwen/qwen3-32b:free">Qwen3 32B (Free)</option>
+                                    <option value="openrouter:deepseek/deepseek-chat-v3-0324:free">DeepSeek V3 (Free)</option>
+                                    <option value="x-ai/grok-3-mini-beta">Grok 3 Mini</option>
+                                </optgroup>
+                                <optgroup label="Coding Models">
+                                    <option value="openrouter:qwen/qwen-2.5-coder-32b-instruct:free">Qwen 2.5 Coder 32B (Free)</option>
+                                    <option value="openrouter:agentica-org/deepcoder-14b-preview:free">DeepCoder 14B (Free)</option>
+                                </optgroup>
+                            </select>
+                            <button class="btn-icon" onclick="clearChat()" title="Clear Chat">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="welcome-message">
+                                <h2>👋 Welcome to Vibe AI Agent!</h2>
+                                <p>I can help you with:</p>
+                                <div class="feature-cards">
+                                    <div class="feature-card" onclick="insertPrompt('Generate a Python script that...')">
+                                        <i class="fas fa-code"></i>
+                                        <span>Code Generation</span>
+                                    </div>
+                                    <div class="feature-card" onclick="insertPrompt('Debug this code:')">
+                                        <i class="fas fa-bug"></i>
+                                        <span>Debugging</span>
+                                    </div>
+                                    <div class="feature-card" onclick="insertPrompt('Explain how to...')">
+                                        <i class="fas fa-lightbulb"></i>
+                                        <span>Explanations</span>
+                                    </div>
+                                    <div class="feature-card" onclick="switchTab('image')">
+                                        <i class="fas fa-image"></i>
+                                        <span>Image Gen</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input-container">
+                            <div class="input-wrapper">
+                                <textarea id="chatInput" placeholder="Describe what you want to build in plain English..." rows="1" onkeydown="handleChatKeydown(event)"></textarea>
+                                <div class="input-actions">
+                                    <button class="btn-icon" onclick="document.getElementById('fileUpload').click()" title="Attach File">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
+                                    <input type="file" id="fileUpload" hidden onchange="handleFileUpload(event)">
+                                    <button class="btn-send" onclick="sendMessage()" id="sendBtn">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Generation Tab -->
+                <div class="tab-content" id="tab-image">
+                    <div class="image-gen-container">
+                        <h2><i class="fas fa-image"></i> AI Image Generator</h2>
+                        <div class="image-controls">
+                            <select id="imageModel">
+                                <option value="stabilityai/stable-diffusion-3-medium">Stable Diffusion 3</option>
+                                <option value="stabilityai/stable-diffusion-xl-base-1.0">Stable Diffusion XL</option>
+                                <option value="flux">Flux (via Pollinations)</option>
+                                <option value="grok-2-image">Grok 2 Image</option>
+                            </select>
+                            <div class="size-controls">
+                                <input type="number" id="imgWidth" value="512" placeholder="Width">
+                                <span>×</span>
+                                <input type="number" id="imgHeight" value="512" placeholder="Height">
+                            </div>
+                        </div>
+                        <textarea id="imagePrompt" placeholder="Describe the image you want to generate..." rows="3"></textarea>
+                        <textarea id="negativePrompt" placeholder="Negative prompt (what to avoid)..." rows="2"></textarea>
+                        <button class="btn-primary" onclick="generateImage()">
+                            <i class="fas fa-magic"></i> Generate Image
+                        </button>
+                        <div class="image-gallery" id="imageGallery">
+                            <p class="placeholder-text">Your generated images will appear here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OCR Tab -->
+                <div class="tab-content" id="tab-ocr">
+                    <div class="ocr-container">
+                        <h2><i class="fas fa-file-alt"></i> OCR - Extract Text from Images</h2>
+                        <div class="upload-zone" id="ocrDropZone" onclick="document.getElementById('ocrFileInput').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Drop image here or click to upload</p>
+                            <input type="file" id="ocrFileInput" hidden accept="image/*" onchange="handleOCRUpload(event)">
+                        </div>
+                        <div class="ocr-preview" id="ocrPreview"></div>
+                        <div class="ocr-result" id="ocrResult">
+                            <textarea id="ocrText" placeholder="Extracted text will appear here..." readonly></textarea>
+                            <div class="ocr-actions">
+                                <button class="btn-secondary" onclick="copyOCRText()">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                                <button class="btn-secondary" onclick="downloadOCRText()">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regex Tab -->
+                <div class="tab-content" id="tab-regex">
+                    <div class="regex-container">
+                        <h2><i class="fas fa-code"></i> Regex Tester & Generator</h2>
+                        <div class="regex-input-group">
+                            <label>Pattern</label>
+                            <input type="text" id="regexPattern" placeholder="Enter regex pattern..." oninput="testRegex()">
+                            <div class="regex-flags">
+                                <label><input type="checkbox" id="flagG" checked> g</label>
+                                <label><input type="checkbox" id="flagI"> i</label>
+                                <label><input type="checkbox" id="flagM"> m</label>
+                            </div>
+                        </div>
+                        <div class="regex-input-group">
+                            <label>Test String</label>
+                            <textarea id="regexTestString" rows="5" placeholder="Enter text to test..." oninput="testRegex()"></textarea>
+                        </div>
+                        <div class="regex-results" id="regexResults">
+                            <h4>Matches</h4>
+                            <div id="regexMatches"></div>
+                        </div>
+                        <div class="ai-regex-gen">
+                            <h4>AI Regex Generator</h4>
+                            <textarea id="regexDescription" placeholder="Describe what you want to match in plain English..."></textarea>
+                            <button class="btn-primary" onclick="generateRegex()">
+                                <i class="fas fa-magic"></i> Generate Regex
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Editor Tab -->
+                <div class="tab-content" id="tab-editor">
+                    <div class="editor-container">
+                        <div class="editor-toolbar">
+                            <select id="editorLanguage" onchange="changeLanguage()">
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="json">JSON</option>
+                                <option value="typescript">TypeScript</option>
+                                <option value="java">Java</option>
+                                <option value="cpp">C++</option>
+                                <option value="rust">Rust</option>
+                                <option value="go">Go</option>
+                            </select>
+                            <div class="editor-actions">
+                                <button class="btn-icon" onclick="formatCode()" title="Format Code">
+                                    <i class="fas fa-align-left"></i>
+                                </button>
+                                <button class="btn-icon" onclick="aiFixCode()" title="AI Fix">
+                                    <i class="fas fa-magic"></i>
+                                </button>
+                                <button class="btn-icon" onclick="runCode()" title="Run Code">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="btn-icon" onclick="saveFile()" title="Save File">
+                                    <i class="fas fa-save"></i>
+                                </button>
+                                <button class="btn-icon" onclick="downloadCode()" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="editor-wrapper">
+                            <div class="line-numbers" id="lineNumbers"></div>
+                            <textarea id="codeEditor" spellcheck="false" placeholder="Start coding here or ask AI to generate code..."></textarea>
+                        </div>
+                        <div class="editor-output" id="editorOutput">
+                            <div class="output-header">
+                                <span>Output</span>
+                                <button class="btn-icon" onclick="clearOutput()"><i class="fas fa-times"></i></button>
+                            </div>
+                            <pre id="outputContent"></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Tab -->
+                <div class="tab-content" id="tab-preview">
+                    <div class="preview-container">
+                        <div class="preview-toolbar">
+                            <div class="device-buttons">
+                                <button class="active" onclick="setPreviewSize('desktop')">
+                                    <i class="fas fa-desktop"></i>
+                                </button>
+                                <button onclick="setPreviewSize('tablet')">
+                                    <i class="fas fa-tablet-alt"></i>
+                                </button>
+                                <button onclick="setPreviewSize('mobile')">
+                                    <i class="fas fa-mobile-alt"></i>
+                                </button>
+                            </div>
+                            <button class="btn-secondary" onclick="refreshPreview()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                        <div class="preview-frame-container">
+                            <iframe id="previewFrame" sandbox="allow-scripts allow-modals"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Files Tab -->
+                <div class="tab-content" id="tab-files">
+                    <div class="files-container">
+                        <div class="files-toolbar">
+                            <button class="btn-primary" onclick="createNewFile()">
+                                <i class="fas fa-plus"></i> New File
+                            </button>
+                            <button class="btn-secondary" onclick="createNewFolder()">
+                                <i class="fas fa-folder-plus"></i> New Folder
+                            </button>
+                            <button class="btn-secondary" onclick="importFile()">
+                                <i class="fas fa-upload"></i> Import
+                            </button>
+                            <input type="file" id="importFileInput" hidden multiple onchange="handleImportFiles(event)">
+                        </div>
+                        <div class="file-tree" id="fileTree">
+                            <!-- File tree populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Debug Tab -->
+                <div class="tab-content" id="tab-debug">
+                    <div class="debug-container">
+                        <h2><i class="fas fa-bug"></i> Debug Console</h2>
+                        <div class="debug-controls">
+                            <button class="btn-secondary" onclick="clearDebugLog()">
+                                <i class="fas fa-trash"></i> Clear
+                            </button>
+                            <label>
+                                <input type="checkbox" id="autoScroll" checked> Auto-scroll
+                            </label>
+                        </div>
+                        <div class="debug-log" id="debugLog">
+                            <div class="log-entry info">
+                                <span class="timestamp">[System]</span>
+                                <span class="message">Debug console initialized. API rotation and caching active.</span>
+                            </div>
+                        </div>
+                        <div class="api-rotation-status">
+                            <h4>API Provider Status</h4>
+                            <div id="providerStatus"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div class="tab-content" id="tab-history">
+                    <div class="history-container">
+                        <h2><i class="fas fa-history"></i> Conversation History</h2>
+                        <div class="history-list" id="historyList">
+                            <p class="placeholder-text">No conversation history yet</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Settings Modal -->
+        <div class="modal" id="settingsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-cog"></i> Settings</h2>
+                    <button class="btn-icon" onclick="closeSettings()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h3>API Configuration</h3>
+                        <div class="setting-item">
+                            <label>Primary Provider</label>
+                            <select id="primaryProvider">
+                                <option value="puter">Puter.js (Recommended)</option>
+                                <option value="pollinations">Pollinations AI</option>
+                                <option value="custom">Custom API Keys</option>
+                            </select>
+                        </div>
+                        <div class="setting-item" id="customApiSection" style="display:none;">
+                            <label>OpenRouter API Key</label>
+                            <input type="password" id="openrouterKey" placeholder="sk-or-...">
+                            <label>Groq API Key</label>
+                            <input type="password" id="groqKey" placeholder="gsk_...">
+                            <label>Google AI Studio Key</label>
+                            <input type="password" id="geminiKey" placeholder="AIza...">
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Auto-Rotation Settings</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="autoRotation" checked>
+                                Enable Auto API Rotation
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="cacheEnabled" checked>
+                                Enable Response Caching
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>Max Retries per Request</label>
+                            <input type="number" id="maxRetries" value="3" min="1" max="10">
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3>Appearance</h3>
+                        <div class="setting-item">
+                            <label>Theme</label>
+                            <select id="themeSelect" onchange="changeTheme()">
+                                <option value="dark">Dark</option>
+                                <option value="light">Light</option>
+                                <option value="auto">Auto</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
+                    <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

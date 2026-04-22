@@ -1,0 +1,41 @@
+{
+  "name": "vibe-ai-agent",
+  "version": "1.0.0",
+  "description": "Ultimate Free AI Platform - Vibe Coding with Plain English",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve www",
+    "build": "npm run copy-files && npm run build-android",
+    "copy-files": "mkdir -p www && cp index.html www/ && cp styles.css www/ && cp app.js www/ && cp manifest.json www/ && cp sw.js www/ && cp icon-*.png www/ 2>/dev/null || true",
+    "cap:init": "npx cap init 'Vibe AI Agent' com.vibeai.agent --web-dir www",
+    "cap:add:android": "npx cap add android",
+    "cap:sync": "npx cap sync",
+    "cap:open:android": "npx cap open android",
+    "build-android": "npm run cap:sync && cd android && ./gradlew assembleDebug",
+    "build-android-release": "npm run cap:sync && cd android && ./gradlew assembleRelease"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "free-api",
+    "code-generation",
+    "image-generation",
+    "vibe-coding",
+    "puter",
+    "openrouter",
+    "grok"
+  ],
+  "author": "Vibe AI",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0",
+    "@capacitor/keyboard": "^6.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}
